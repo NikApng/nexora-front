@@ -1,4 +1,8 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
+import PhotoUploadModal from "@/components/profile/PhotoUploadModal";
+import { Camera } from "lucide-react";
 
 const projects = [
     {
@@ -28,13 +32,53 @@ const projects = [
 ];
 
 function Page() {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+
+    const handlePhotoSelect = (file: File | null) => {
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setProfilePhoto(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+            // Здесь можно добавить логику для загрузки файла на сервер
+        } else {
+            setProfilePhoto(null);
+        }
+    };
+
     return (
         <main className="min-h-screen bg-slate-50 py-8">
             <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 lg:px-0">
+                <PhotoUploadModal
+                    open={isModalOpen}
+                    onOpenChange={setIsModalOpen}
+                    onPhotoSelect={handlePhotoSelect}
+                    currentPhoto={profilePhoto}
+                />
+
                 <section className="flex flex-col gap-6 rounded-2xl bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between">
                     <div className="flex items-center gap-4">
-                        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-slate-900 text-2xl font-semibold text-white">
-                            N
+                        <div className="relative group">
+                            <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-slate-900 text-2xl font-semibold text-white">
+                                {profilePhoto ? (
+                                    <img
+                                        src={profilePhoto}
+                                        alt="Profile"
+                                        className="h-full w-full object-cover"
+                                    />
+                                ) : (
+                                    "N"
+                                )}
+                            </div>
+                            <button
+                                onClick={() => setIsModalOpen(true)}
+                                className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity group-hover:opacity-100"
+                                aria-label="Изменить фото"
+                            >
+                                <Camera className="h-6 w-6 text-white" />
+                            </button>
                         </div>
                         <div>
                             <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
@@ -65,6 +109,39 @@ function Page() {
                             <div className="text-xs text-slate-500">Pull Request'ов</div>
                         </div>
                     </div>
+                </section>
+
+                {/* Плашка с выбором фото */}
+                <section className="rounded-2xl border-2 border-dashed border-slate-300 bg-white p-6 shadow-sm transition hover:border-slate-400 hover:bg-slate-50">
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="flex w-full items-center justify-between gap-4"
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
+                                {profilePhoto ? (
+                                    <img
+                                        src={profilePhoto}
+                                        alt="Profile"
+                                        className="h-full w-full rounded-full object-cover"
+                                    />
+                                ) : (
+                                    <Camera className="h-6 w-6 text-slate-600" />
+                                )}
+                            </div>
+                            <div className="text-left">
+                                <h3 className="text-base font-semibold text-slate-900">
+                                    {profilePhoto ? "Изменить фото профиля" : "Добавить фото профиля"}
+                                </h3>
+                                <p className="text-sm text-slate-500">
+                                    {profilePhoto
+                                        ? "Нажмите, чтобы загрузить новое фото"
+                                        : "Загрузите фото, чтобы другие пользователи могли вас узнать"}
+                                </p>
+                            </div>
+                        </div>
+                        <Camera className="h-5 w-5 text-slate-400" />
+                    </button>
                 </section>
 
                 <section className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(260px,1fr)]">

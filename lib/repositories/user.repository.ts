@@ -1,0 +1,55 @@
+import { db } from "@/lib/db/connection";
+import { users } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import type { User, NewUser } from "@/db/schema";
+
+export class UserRepository {
+  /**
+   * Найти пользователя по email
+   */
+  async findByEmail(email: string): Promise<User | null> {
+    const results = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+
+    return results[0] || null;
+  }
+
+  /**
+   * Найти пользователя по ID
+   */
+  async findById(id: number): Promise<User | null> {
+    const results = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1);
+
+    return results[0] || null;
+  }
+
+  /**
+   * Создать нового пользователя
+   */
+  async create(userData: Omit<NewUser, "id" | "createdAt" | "updatedAt">): Promise<User> {
+    const results = await db
+      .insert(users)
+      .values(userData)
+      .returning();
+
+    return results[0];
+  }
+
+  /**
+   * Проверить существование пользователя по email
+   */
+  async existsByEmail(email: string): Promise<boolean> {
+    const user = await this.findByEmail(email);
+    return user !== null;
+  }
+}
+
+export const userRepository = new UserRepository();
+
