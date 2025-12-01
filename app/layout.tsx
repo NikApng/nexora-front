@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type {Metadata} from "next";
+import {ThemeProvider} from "next-themes";
 import "./globals.css";
-import { SessionProvider } from "@/components/providers/SessionProvider";
+import {SessionProvider} from "@/components/providers/SessionProvider";
 
 export const metadata: Metadata = {
     title: "Nexora",
@@ -15,7 +16,9 @@ export default function RootLayout({
     return (
         <html lang="en">
         <body>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
             <SessionProvider>{children}</SessionProvider>
+        </ThemeProvider>
         </body>
         </html>
     );

@@ -4,6 +4,9 @@ import React from 'react';
 import NavItem from "@/components/header/nav-item";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
+import ThemeButton from '@/components/header/ThemeBtton'
+import Link from "next/link";
+
 
 function HeaderLayout() {
     const { data: session, status } = useSession();
@@ -12,14 +15,14 @@ function HeaderLayout() {
         <header className="w-full border-b border-slate-200 bg-white/80 backdrop-blur">
             <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:h-20 sm:px-6 lg:px-8">
 
-                <a href="/projects" className="flex items-center gap-2">
+                <Link href="/projects" className="flex items-center gap-2">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-sm font-semibold text-white">
                         N
                     </div>
                     <span className="text-lg font-semibold tracking-tight text-slate-900">
                         Nexora
                     </span>
-                </a>
+                </Link>
 
                 {status === "authenticated" && <NavItem />}
 
@@ -55,6 +58,7 @@ function HeaderLayout() {
                             </a>
                         </>
                     )}
+                    <ThemeButton/>
                 </div>
 
                 <button
