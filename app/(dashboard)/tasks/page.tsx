@@ -7,13 +7,11 @@ import { Plus, Filter, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-// Моковые данные для примера
 const initialTasks: Task[] = [
   {
     id: "1",
     title: "Создать дизайн системы задач",
-    description:
-      "Разработать UI/UX для системы управления задачами в стиле Jira",
+    description: "Разработать UI/UX для системы управления задачами в стиле Jira",
     status: "todo",
     priority: "high",
     assignee: {
@@ -103,20 +101,18 @@ function Page() {
   const [draggedOverColumn, setDraggedOverColumn] = useState<TaskStatus | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Группировка задач по статусам
   const getTasksByStatus = (status: TaskStatus) => {
     return tasks.filter((task) => task.status === status);
   };
 
-  // Фильтрация задач по поисковому запросу
   const filteredTasks = tasks.filter((task) => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
-      task.title.toLowerCase().includes(query) ||
-      task.description?.toLowerCase().includes(query) ||
-      task.assignee?.name.toLowerCase().includes(query) ||
-      task.labels?.some((label) => label.toLowerCase().includes(query))
+        task.title.toLowerCase().includes(query) ||
+        task.description?.toLowerCase().includes(query) ||
+        task.assignee?.name.toLowerCase().includes(query) ||
+        task.labels?.some((label) => label.toLowerCase().includes(query))
     );
   });
 
@@ -132,22 +128,22 @@ function Page() {
   }, []);
 
   const handleDrop = useCallback(
-    (e: React.DragEvent, newStatus: TaskStatus) => {
-      e.preventDefault();
-      if (!draggedTask) return;
+      (e: React.DragEvent, newStatus: TaskStatus) => {
+        e.preventDefault();
+        if (!draggedTask) return;
 
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          task.id === draggedTask.id
-            ? { ...task, status: newStatus, updatedAt: new Date() }
-            : task
-        )
-      );
+        setTasks((prevTasks) =>
+            prevTasks.map((task) =>
+                task.id === draggedTask.id
+                    ? { ...task, status: newStatus, updatedAt: new Date() }
+                    : task
+            )
+        );
 
-      setDraggedTask(null);
-      setDraggedOverColumn(null);
-    },
-    [draggedTask]
+        setDraggedTask(null);
+        setDraggedOverColumn(null);
+      },
+      [draggedTask]
   );
 
   const handleAddTask = (status: TaskStatus) => {
@@ -164,86 +160,83 @@ function Page() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50">
-      <div className="mx-auto max-w-[calc(100vw-2rem)] px-4 py-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">Задачи</h1>
-            <p className="mt-1 text-sm text-slate-500">
-              Управление проектами и задачами
-            </p>
+      <main className="min-h-screen bg-background text-foreground">
+        <div className="mx-auto max-w-[calc(100vw-2rem)] px-4 py-6 lg:px-8">
+          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-2xl font-bold">Задачи</h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Управление проектами и задачами
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm">
+                <Filter className="mr-2 h-4 w-4" />
+                Фильтры
+              </Button>
+              <Button size="sm">
+                <Plus className="mr-2 h-4 w-4" />
+                Создать задачу
+              </Button>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm">
-              <Filter className="mr-2 h-4 w-4" />
-              Фильтры
-            </Button>
-            <Button size="sm">
-              <Plus className="mr-2 h-4 w-4" />
-              Создать задачу
-            </Button>
+
+          <div className="mb-6">
+            <div className="relative max-w-md">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                  type="text"
+                  placeholder="Поиск задач..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+              />
+            </div>
           </div>
-        </div>
 
-        {/* Search */}
-        <div className="mb-6">
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <Input
-              type="text"
-              placeholder="Поиск задач..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-        </div>
-
-        {/* Stats */}
-        <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {columns.map((column) => {
-            const columnTasks = getTasksByStatus(column.id);
-            return (
-              <div
-                key={column.id}
-                className="rounded-lg border border-slate-200 bg-white p-4"
-              >
-                <div className="text-sm text-slate-500">{column.title}</div>
-                <div className="mt-1 text-2xl font-bold text-slate-900">
-                  {columnTasks.length}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Kanban Board */}
-        <div className="overflow-x-auto pb-4">
-          <div className="inline-flex gap-4">
+          <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
             {columns.map((column) => {
-              const columnTasks = searchQuery
-                ? filteredTasks.filter((task) => task.status === column.id)
-                : getTasksByStatus(column.id);
+              const columnTasks = getTasksByStatus(column.id);
               return (
-                <TaskColumn
-                  key={column.id}
-                  status={column.id}
-                  title={column.title}
-                  tasks={columnTasks}
-                  count={columnTasks.length}
-                  onDragOver={(e) => handleDragOver(e, column.id)}
-                  onDrop={handleDrop}
-                  onDragStart={handleDragStart}
-                  onAddTask={() => handleAddTask(column.id)}
-                  isDraggedOver={draggedOverColumn === column.id}
-                />
+                  <div
+                      key={column.id}
+                      className="rounded-lg border border-border bg-card p-4 shadow-sm"
+                  >
+                    <div className="text-sm text-muted-foreground">{column.title}</div>
+                    <div className="mt-1 text-2xl font-bold">
+                      {columnTasks.length}
+                    </div>
+                  </div>
               );
             })}
           </div>
+
+          <div className="overflow-x-auto pb-4">
+            <div className="inline-flex gap-4">
+              {columns.map((column) => {
+                const columnTasks = searchQuery
+                    ? filteredTasks.filter((task) => task.status === column.id)
+                    : getTasksByStatus(column.id);
+
+                return (
+                    <TaskColumn
+                        key={column.id}
+                        status={column.id}
+                        title={column.title}
+                        tasks={columnTasks}
+                        count={columnTasks.length}
+                        onDragOver={(e) => handleDragOver(e, column.id)}
+                        onDrop={handleDrop}
+                        onDragStart={handleDragStart}
+                        onAddTask={() => handleAddTask(column.id)}
+                        isDraggedOver={draggedOverColumn === column.id}
+                    />
+                );
+              })}
+            </div>
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
   );
 }
 

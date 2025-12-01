@@ -8,18 +8,20 @@ export const metadata: Metadata = {
     description: "Nexora Dashboard",
 };
 
-export default function RootLayout({
-                                       children,
-                                   }: {
-    children: React.ReactNode;
-}) {
+export default function RootLayout({children}: { children: React.ReactNode }) {
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
         <body>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+        >
             <SessionProvider>{children}</SessionProvider>
         </ThemeProvider>
         </body>
         </html>
     );
 }
+

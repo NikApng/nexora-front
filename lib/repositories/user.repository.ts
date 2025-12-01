@@ -4,9 +4,7 @@ import { eq } from "drizzle-orm";
 import type { User, NewUser } from "@/db/schema";
 
 export class UserRepository {
-  /**
-   * Найти пользователя по email
-   */
+
   async findByEmail(email: string): Promise<User | null> {
     const results = await db
       .select()
@@ -17,9 +15,6 @@ export class UserRepository {
     return results[0] || null;
   }
 
-  /**
-   * Найти пользователя по ID
-   */
   async findById(id: number): Promise<User | null> {
     const results = await db
       .select()
@@ -30,9 +25,6 @@ export class UserRepository {
     return results[0] || null;
   }
 
-  /**
-   * Создать нового пользователя
-   */
   async create(userData: Omit<NewUser, "id" | "createdAt" | "updatedAt">): Promise<User> {
     const results = await db
       .insert(users)
@@ -42,9 +34,6 @@ export class UserRepository {
     return results[0];
   }
 
-  /**
-   * Проверить существование пользователя по email
-   */
   async existsByEmail(email: string): Promise<boolean> {
     const user = await this.findByEmail(email);
     return user !== null;

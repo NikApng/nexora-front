@@ -27,7 +27,6 @@ export function initDatabase() {
   }
 }
 
-// Вызываем инициализацию при импорте (только на сервере)
 if (typeof window === "undefined") {
   initDatabase();
 }
