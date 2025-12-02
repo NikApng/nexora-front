@@ -13,7 +13,7 @@ function HeaderLayout() {
     return (
         <header className="w-full border-b border-border bg-background/80 backdrop-blur">
             <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:h-20 sm:px-6 lg:px-8">
-                {/* Лого + бренд */}
+
                 <Link href="/projects" className="flex items-center gap-2">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-primary-foreground">
                         N
@@ -23,7 +23,7 @@ function HeaderLayout() {
           </span>
                 </Link>
 
-                {status === "authenticated" && <NavItem />}
+                <NavItem />
 
                 <div className="hidden items-center gap-3 sm:flex">
                     {status === "loading" ? (

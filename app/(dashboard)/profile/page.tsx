@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import PhotoUploadModal from "@/components/profile/PhotoUploadModal";
 import { Camera } from "lucide-react";
+import {useSession} from "next-auth/react";
 
 const projects = [
     {
@@ -34,6 +35,7 @@ const projects = [
 function Page() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+    const { data: session, status } = useSession();
 
     const handlePhotoSelect = (file: File | null) => {
         if (file) {
@@ -81,9 +83,11 @@ function Page() {
                             </button>
                         </div>
                         <div>
-                            <h1 className="text-2xl font-semibold tracking-tight">
-                                Никита
-                            </h1>
+                            {status === "unauthenticated" ?
+                                (<span>{session?.user?.name}</span>)
+                                :
+                                (<span>Войдите в аккаунт что бы увидеть все детали профиля</span>)
+                            }
                             <p className="text-sm text-muted-foreground">
                                 Frontend-разработчик · Next.js / React / TypeScript
                             </p>

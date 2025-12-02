@@ -12,13 +12,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import {useSession} from "next-auth/react";
 
 export default function SettingsPage() {
     const [isSectionsOpen, setIsSectionsOpen] = useState(false);
 
+
     return (
         <main className="relative max-w-5xl mx-auto px-4 py-10 space-y-10">
-            {/* Header */}
+
             <header className="flex items-center justify-between gap-4">
                 <div className="space-y-1">
                     <h1 className="text-3xl font-semibold tracking-tight">Настройки</h1>
@@ -27,7 +29,6 @@ export default function SettingsPage() {
                     </p>
                 </div>
 
-                {/* Кнопка, которая открывает панель разделов справа */}
                 <Button
                     variant="outline"
                     size="sm"
@@ -38,7 +39,6 @@ export default function SettingsPage() {
                 </Button>
             </header>
 
-            {/* Основной контент слева */}
             <div className="space-y-8">
                 <Card>
                     <CardHeader>
