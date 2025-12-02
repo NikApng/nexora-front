@@ -1,36 +1,122 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Nexora — ваш личный GitHub-профиль нового поколения
 
-## Getting Started
+Nexora — это веб-платформа, которая работает как улучшенный личный GitHub-профиль: проекты, статистика, профиль пользователя, визуальный интерфейс для ведения задач и активности.
 
-First, run the development server:
+Проект создаётся как современная портфолио-система, где пользователь может:
 
-```bash
+регистрироваться и хранить свой профиль
+
+добавлять проекты
+
+просматривать свою активность
+
+обновлять фото и имя
+
+видеть статистику и прогресс
+
+развивать собственное “облако разработчика”
+
+В отличие от обычного GitHub Profile, здесь всё — твое пространство, твой UI, твои данные.
+
+🚀 Функционал
+✔ Регистрация и вход
+
+Авторизация через NextAuth Credentials
+
+JWT-сессии
+
+Хеширование паролей
+
+Защищённые страницы
+
+✔ Профиль разработчика
+
+Фото профиля (загрузка через модалку)
+
+Первая буква имени, если фото нет
+
+Имя, почта, статистика
+
+Дата регистрации, активность
+
+✔ Проекты
+
+Карточки проектов
+
+Стек, описание, время обновления
+
+Подготовлено для будущего CRUD (добавление/удаление)
+
+✔ Интерфейс
+
+Приятный UI, в духе GitHub + Linear
+
+Tailwind CSS
+
+Светлая/тёмная тема
+
+Модалки, карточки, статистика, сайдбары
+
+🛠 Технологии
+Технология	Назначение
+Next.js 16 (App Router)	Основа приложения
+React 19	UI
+NextAuth	Авторизация
+Drizzle ORM	Работа с БД
+Tailwind CSS	Стили
+React Query	Управление данными
+TypeScript	Типы
+Lucide Icons	Иконки
+📁 Архитектура
+src/
+ ├── app/
+ │    ├── login/
+ │    ├── register/
+ │    ├── profile/
+ │    ├── api/
+ │    │     ├── auth/
+ │    │     ├── register/
+ │    │     └── profile/
+ │    └── layout.tsx
+ │
+ ├── components/
+ ├── lib/
+ ├── db/
+
+
+Проект идёт по схеме:
+UI → Hook → Service → Repository → DB
+
+📦 Установка
+git clone https://github.com/NikApng/nexora-front.git
+cd nexora-front
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+.env.local:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+NEXTAUTH_SECRET=...
+NEXTAUTH_URL=http://localhost:3000
+DATABASE_URL=file:./dev.db
 
-## Learn More
+🧩 Планы развития
 
-To learn more about Next.js, take a look at the following resources:
+Полный CRUD проектов
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Канбан-задачи (как GitHub Issues / Jira)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Drag-and-drop доска задач
 
-## Deploy on Vercel
+Настройки профиля
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Хранение аватаров в Cloudinary
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Лента активности
+
+Публичные профили как на GitHub (/users/nikita)
+
+📬 Автор
+
+Никита (NikApng)
+Frontend Developer — React / Next.js / TypeScript
