@@ -1,6 +1,5 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { authService } from "@/lib/services/auth.service";
 
 const authConfig: NextAuthOptions = {
   providers: [

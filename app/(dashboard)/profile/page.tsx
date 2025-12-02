@@ -32,10 +32,15 @@ const projects = [
     },
 ];
 
+
 function Page() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
     const { data: session, status } = useSession();
+    const nickName = session?.user?.name
+        ? session.user.name.trim().charAt(0).toUpperCase()
+        : null;
+
 
     const handlePhotoSelect = (file: File | null) => {
         if (file) {
@@ -59,7 +64,6 @@ function Page() {
                     currentPhoto={profilePhoto}
                 />
 
-                {/* Верхний блок профиля */}
                 <section className="flex flex-col gap-6 rounded-2xl bg-card p-6 shadow-sm md:flex-row md:items-center md:justify-between border border-border">
                     <div className="flex items-center gap-4">
                         <div className="relative group">
@@ -70,9 +74,7 @@ function Page() {
                                         alt="Profile"
                                         className="h-full w-full object-cover"
                                     />
-                                ) : (
-                                    "N"
-                                )}
+                                ) : (<span>{nickName}</span>)}
                             </div>
                             <button
                                 onClick={() => setIsModalOpen(true)}
@@ -117,7 +119,6 @@ function Page() {
                     </div>
                 </section>
 
-                {/* Плашка с выбором фото */}
                 <section className="rounded-2xl border-2 border-dashed border-border bg-card p-6 shadow-sm transition hover:border-accent hover:bg-accent/40">
                     <button
                         onClick={() => setIsModalOpen(true)}
@@ -152,7 +153,6 @@ function Page() {
                     </button>
                 </section>
 
-                {/* Проекты + сайдбар */}
                 <section className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(260px,1fr)]">
                     {/* Левая колонка — проекты */}
                     <div className="flex flex-col gap-4">
