@@ -19,7 +19,7 @@ function RegisterForm() {
     try {
       await register({ name, email, password });
     } catch {
-      // Ошибка обрабатывается в хуке
+
     }
   }
 

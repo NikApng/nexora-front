@@ -15,7 +15,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Регистрация пользователя через сервис
     const user = await authService.register(validatedData.data);
 
     return NextResponse.json(

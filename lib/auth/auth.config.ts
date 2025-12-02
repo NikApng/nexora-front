@@ -1,5 +1,6 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import {authService} from "@/lib/services/auth.service"
 
 const authConfig: NextAuthOptions = {
   providers: [
@@ -10,7 +11,6 @@ const authConfig: NextAuthOptions = {
         password: { label: "Пароль", type: "password" },
       },
       async authorize(credentials) {
-        console.log("AUTH credentials:", credentials);
 
         const email = credentials?.email;
         const password = credentials?.password;
@@ -18,16 +18,15 @@ const authConfig: NextAuthOptions = {
         if (!email || !password) {
           return null;
         }
-
-        if (email === "admin@admin.com" && password === "admin123") {
-          return {
-            id: "1",
-            email,
-            name: "Admin",
-          };
+        const user = await authService.login({email, password})
+        if(!user){
+          return null;
         }
-
-        return null;
+        return {
+          id: user.id.toString(),
+          email: user.email,
+          password: user.password,
+        }
       }
 
 
