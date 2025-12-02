@@ -23,10 +23,8 @@ function HeaderLayout() {
           </span>
                 </Link>
 
-                {/* Навигация по страницам (профиль, проекты, настройки и т.д.) */}
                 {status === "authenticated" && <NavItem />}
 
-                {/* Правая часть: auth + тема */}
                 <div className="hidden items-center gap-3 sm:flex">
                     {status === "loading" ? (
                         <div className="h-8 w-20 animate-pulse rounded bg-muted" />
@@ -62,7 +60,6 @@ function HeaderLayout() {
                     <ThemeButton />
                 </div>
 
-                {/* Мобильное меню (пока просто иконка-бургер) */}
                 <button
                     type="button"
                     className="inline-flex items-center justify-center rounded-md border border-border bg-card p-2 md:hidden"

@@ -18,7 +18,7 @@ function LoginForm() {
     try {
       await login({ email, password });
     } catch {
-      // Ошибка обрабатывается в хуке
+
     }
   }
 
