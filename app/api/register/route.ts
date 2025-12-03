@@ -6,7 +6,6 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Валидация данных
     const validatedData = registerSchema.safeParse(body);
     if (!validatedData.success) {
       return NextResponse.json(
