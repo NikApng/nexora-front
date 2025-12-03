@@ -7,7 +7,6 @@ const dbPath = path.join(process.cwd(), "db.sqlite");
 const sqlite = new Database(dbPath);
 export const db = drizzle(sqlite, { schema });
 
-// Автоматическое создание таблиц при первом запуске
 export function initDatabase() {
   try {
     // Создаем таблицу users если её нет

@@ -17,9 +17,6 @@ interface UseLoginReturn {
   error: string | null;
 }
 
-/**
- * Хук для регистрации пользователя
- */
 export function useRegister(): UseRegisterReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +41,6 @@ export function useRegister(): UseRegisterReturn {
         throw new Error(result.error || "Ошибка при регистрации");
       }
 
-      // Автоматический вход после регистрации
       const signInResult = await signIn("credentials", {
         email: data.email,
         password: data.password,
@@ -68,9 +64,6 @@ export function useRegister(): UseRegisterReturn {
   return { register, isLoading, error };
 }
 
-/**
- * Хук для входа пользователя
- */
 export function useLogin(): UseLoginReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
