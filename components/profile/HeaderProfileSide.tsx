@@ -2,9 +2,10 @@ import React, {useState} from 'react';
 import {Camera} from "lucide-react";
 import {useProfile} from "@/lib/hooks/use-profile";
 import {useSession} from "next-auth/react";
+import {Button} from "@/components/ui/button";
 
 
-function HeaderProfileSide({isModalOpen, }) {
+function HeaderProfileSide({isOpen, }) {
     const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
 
     const handlePhotoSelect = (file: File | null) => {
@@ -42,13 +43,13 @@ function HeaderProfileSide({isModalOpen, }) {
                             <span>{nickName}</span>
                         )}
                     </div>
-                    <button
-                        onClick={() => setIsModalOpen(true)}
+                    <Button
+                        onClick={isOpen}
                         className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100"
                         aria-label="Изменить фото"
                     >
                         <Camera className="h-6 w-6 text-primary-foreground"/>
-                    </button>
+                    </Button>
                 </div>
                 <div>
                     <p className="text-lg font-semibold">
