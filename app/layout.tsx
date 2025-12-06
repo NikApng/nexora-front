@@ -1,14 +1,15 @@
-import type {Metadata} from "next";
-import {ThemeProvider} from "next-themes";
+import type { Metadata } from "next";
+import { ThemeProvider } from "next-themes";
 import "./globals.css";
-import {SessionProvider} from "@/components/providers/SessionProvider";
+import { SessionProvider } from "@/components/providers/SessionProvider";
+import { ReactQueryProvider } from "@/app/ReactQueryProvider";
 
 export const metadata: Metadata = {
     title: "Nexora",
     description: "Nexora Dashboard",
 };
 
-export default function RootLayout({children}: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en" suppressHydrationWarning>
         <body>
@@ -18,10 +19,11 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
             enableSystem
             disableTransitionOnChange
         >
-            <SessionProvider>{children}</SessionProvider>
+            <ReactQueryProvider>
+                <SessionProvider>{children}</SessionProvider>
+            </ReactQueryProvider>
         </ThemeProvider>
         </body>
         </html>
     );
 }
-

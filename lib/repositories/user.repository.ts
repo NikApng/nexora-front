@@ -24,6 +24,18 @@ export class UserRepository {
 
     return results[0] || null;
   }
+  async updateBio (id: number, bio: string): Promise<User | null> {
+    const result = await db
+        .update(users)
+        .set({
+          bio,
+          updateAt: new Date()
+        })
+        .where(eq(users.id, id))
+        .returning();
+
+    return result[0] || null;
+  }
 
   async create(userData: Omit<NewUser, "id" | "createdAt" | "updatedAt">): Promise<User> {
     const results = await db

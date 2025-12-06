@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PhotoUploadModal from "@/components/profile/PhotoUploadModal";
 import { Camera } from "lucide-react";
-import {useSession} from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { useProfile, useUpdateBio } from "@/lib/hooks/use-profile";
 
 const projects = [
     {
@@ -14,33 +15,32 @@ const projects = [
         stack: ["Next.js", "TailwindCSS"],
         updatedAt: "Обновлён 2 часа назад",
     },
-    {
-        id: 2,
-        name: "Analytics Dashboard",
-        description: "Дашборд с метриками и графиками для маркетинга.",
-        language: "JavaScript",
-        stack: ["React", "REST API"],
-        updatedAt: "Обновлён вчера",
-    },
-    {
-        id: 3,
-        name: "Landing Builder",
-        description: "Конструктор лендингов с готовыми блоками.",
-        language: "TypeScript",
-        stack: ["Next.js", "Zustand"],
-        updatedAt: "Обновлён на этой неделе",
-    },
 ];
-
 
 function Page() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
     const { data: session, status } = useSession();
-    const nickName = session?.user?.name
-        ? session.user.name.trim().charAt(0).toUpperCase()
-        : null;
 
+    const { data: profile, isLoading: isProfileLoading } = useProfile();
+    const {
+        mutate: updateBio,
+        isPending: isBioUpdating,
+        error: bioError,
+    } = useUpdateBio();
+
+    const [bioDraft, setBioDraft] = useState("");
+
+    useEffect(() => {
+        if (profile?.bio != null) {
+            setBioDraft(profile.bio);
+        }
+    }, [profile]);
+
+    const nickName =
+        profile?.name?.trim().charAt(0).toUpperCase() ??
+        profile?.email?.trim().charAt(0).toUpperCase() ??
+        "U";
 
     const handlePhotoSelect = (file: File | null) => {
         if (file) {
@@ -53,6 +53,10 @@ function Page() {
             setProfilePhoto(null);
         }
     };
+
+    function handleSaveBio() {
+        updateBio(bioDraft);
+    }
 
     return (
         <main className="min-h-screen bg-background py-8 text-foreground">
@@ -74,7 +78,9 @@ function Page() {
                                         alt="Profile"
                                         className="h-full w-full object-cover"
                                     />
-                                ) : (<span>{nickName}</span>)}
+                                ) : (
+                                    <span>{nickName}</span>
+                                )}
                             </div>
                             <button
                                 onClick={() => setIsModalOpen(true)}
@@ -85,11 +91,11 @@ function Page() {
                             </button>
                         </div>
                         <div>
-                            {status === "unauthenticated" ?
-                                (<span>{session?.user?.name}</span>)
-                                :
-                                (<span>Войдите в аккаунт что бы увидеть все детали профиля</span>)
-                            }
+                            <p className="text-lg font-semibold">
+                                {status === "authenticated"
+                                    ? profile?.name || profile?.email
+                                    : "Гость"}
+                            </p>
                             <p className="text-sm text-muted-foreground">
                                 Frontend-разработчик · Next.js / React / TypeScript
                             </p>
@@ -101,14 +107,14 @@ function Page() {
 
                     <div className="grid w-full grid-cols-3 gap-4 md:w-auto">
                         <div className="text-center">
-                            <div className="text-lg font-semibold">
-                                {projects.length}
-                            </div>
+                            <div className="text-lg font-semibold">{projects.length}</div>
                             <div className="text-xs text-muted-foreground">Проектов</div>
                         </div>
                         <div className="text-center">
                             <div className="text-lg font-semibold">5</div>
-                            <div className="text-xs text-muted-foreground">Открытых задач</div>
+                            <div className="text-xs text-muted-foreground">
+                                Открытых задач
+                            </div>
                         </div>
                         <div className="text-center">
                             <div className="text-lg font-semibold">12</div>
@@ -119,143 +125,39 @@ function Page() {
                     </div>
                 </section>
 
-                <section className="rounded-2xl border-2 border-dashed border-border bg-card p-6 shadow-sm transition hover:border-accent hover:bg-accent/40">
-                    <button
-                        onClick={() => setIsModalOpen(true)}
-                        className="flex w-full items-center justify-between gap-4"
-                    >
-                        <div className="flex items-center gap-4">
-                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted overflow-hidden">
-                                {profilePhoto ? (
-                                    <img
-                                        src={profilePhoto}
-                                        alt="Profile"
-                                        className="h-full w-full rounded-full object-cover"
-                                    />
-                                ) : (
-                                    <Camera className="h-6 w-6 text-muted-foreground" />
-                                )}
-                            </div>
-                            <div className="text-left">
-                                <h3 className="text-base font-semibold">
-                                    {profilePhoto
-                                        ? "Изменить фото профиля"
-                                        : "Добавить фото профиля"}
-                                </h3>
-                                <p className="text-sm text-muted-foreground">
-                                    {profilePhoto
-                                        ? "Нажмите, чтобы загрузить новое фото"
-                                        : "Загрузите фото, чтобы другие пользователи могли вас узнать"}
-                                </p>
-                            </div>
-                        </div>
-                        <Camera className="h-5 w-5 text-muted-foreground" />
-                    </button>
-                </section>
+                <section className="rounded-2xl bg-card p-6 shadow-sm border border-border flex flex-col gap-4">
+                    <h2 className="text-lg font-semibold">О себе</h2>
 
-                <section className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(260px,1fr)]">
-                    {/* Левая колонка — проекты */}
-                    <div className="flex flex-col gap-4">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h2 className="text-lg font-semibold">Проекты</h2>
-                                <p className="text-sm text-muted-foreground">
-                                    Список твоих последних проектов.
+                    {isProfileLoading ? (
+                        <p className="text-sm text-muted-foreground">Загрузка...</p>
+                    ) : (
+                        <>
+              <textarea
+                  className="w-full min-h-[100px] rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+                  value={bioDraft}
+                  onChange={(e) => setBioDraft(e.target.value)}
+                  placeholder="Расскажите о себе, стеке, опыте, чем занимаетесь…"
+              />
+                            {bioError && (
+                                <p className="text-xs text-red-500">
+                                    {(bioError as Error).message}
                                 </p>
-                            </div>
-                            <button className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90">
-                                Новый проект
-                            </button>
-                        </div>
-
-                        <div className="flex flex-col gap-3">
-                            {projects.map((project) => (
-                                <div
-                                    key={project.id}
-                                    className="rounded-2xl border border-border bg-card p-4 transition hover:border-accent hover:bg-accent/40"
+                            )}
+                            <div className="flex justify-end">
+                                <button
+                                    type="button"
+                                    onClick={handleSaveBio}
+                                    disabled={isBioUpdating}
+                                    className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-70"
                                 >
-                                    <div className="mb-1 flex items-center justify-between gap-3">
-                                        <div className="flex items-center gap-2">
-                                            <a
-                                                href="#"
-                                                className="text-sm font-semibold hover:underline"
-                                            >
-                                                {project.name}
-                                            </a>
-                                        </div>
-                                        <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                      {project.language}
-                    </span>
-                                    </div>
-                                    <p className="text-sm text-muted-foreground">
-                                        {project.description}
-                                    </p>
-                                    <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-                                        <div className="flex flex-wrap gap-2">
-                                            {project.stack.map((tech) => (
-                                                <span
-                                                    key={tech}
-                                                    className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground"
-                                                >
-                          {tech}
-                        </span>
-                                            ))}
-                                        </div>
-                                        <span className="text-xs text-muted-foreground">
-                      {project.updatedAt}
-                    </span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Правая колонка — сайдбар */}
-                    <aside className="flex flex-col gap-4">
-                        <div className="rounded-2xl bg-card p-4 shadow-sm border border-border">
-                            <h3 className="mb-3 text-sm font-semibold">
-                                Активность
-                            </h3>
-                            <ul className="space-y-2 text-sm text-muted-foreground">
-                                <li className="flex justify-between">
-                                    <span>Сегодня</span>
-                                    <span className="font-medium text-foreground">
-                    3 коммита
-                  </span>
-                                </li>
-                                <li className="flex justify-between">
-                                    <span>За неделю</span>
-                                    <span className="font-medium text-foreground">
-                    12 задач закрыто
-                  </span>
-                                </li>
-                                <li className="flex justify-between">
-                                    <span>Пулл-реквесты</span>
-                                    <span className="font-medium text-foreground">
-                    4 открыто
-                  </span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div className="rounded-2xl bg-card p-4 shadow-sm border border-border">
-                            <h3 className="mb-3 text-sm font-semibold">
-                                Быстрые действия
-                            </h3>
-                            <div className="flex flex-col gap-2">
-                                <button className="w-full rounded-lg border border-border px-3 py-2 text-sm text-foreground transition hover:bg-muted">
-                                    Перейти к задачам
-                                </button>
-                                <button className="w-full rounded-lg border border-border px-3 py-2 text-sm text-foreground transition hover:bg-muted">
-                                    Настройки профиля
-                                </button>
-                                <button className="w-full rounded-lg border border-border px-3 py-2 text-sm text-foreground transition hover:bg-muted">
-                                    Просмотреть все проекты
+                                    {isBioUpdating ? "Сохранение..." : "Сохранить"}
                                 </button>
                             </div>
-                        </div>
-                    </aside>
+                        </>
+                    )}
                 </section>
+
+                {/* дальше твои блоки с проектами и сайдбаром */}
             </div>
         </main>
     );
