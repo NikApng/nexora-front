@@ -30,7 +30,6 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Registration error:", error);
 
-    // Обработка ошибок от сервиса
     if (error instanceof Error) {
       const statusCode = error.message.includes("уже существует") ? 409 : 500;
       return NextResponse.json({ error: error.message }, { status: statusCode });

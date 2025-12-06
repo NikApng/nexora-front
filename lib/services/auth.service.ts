@@ -16,7 +16,6 @@ export interface LoginCredentials {
 export class AuthService {
 
   async register(data: RegisterData): Promise<Omit<User, "password">> {
-    // Проверка существования пользователя
     const existingUser = await userRepository.existsByEmail(data.email);
     if (existingUser) {
       throw new Error("Пользователь с таким email уже существует");
@@ -35,7 +34,7 @@ export class AuthService {
   }
 
   async login(credentials: LoginCredentials): Promise<Omit<User, "password"> | null> {
-    // Поиск пользователя
+
     const user = await userRepository.findByEmail(credentials.email);
     if (!user) {
       return null;

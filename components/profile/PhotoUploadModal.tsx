@@ -62,9 +62,7 @@ function PhotoUploadModal({
   };
 
   const handleSave = () => {
-    // Если фото было удалено (preview null), передаем null
-    // Если выбран новый файл, передаем его
-    // Если ничего не изменилось, передаем null (фото осталось прежним)
+
     if (!preview) {
       onPhotoSelect(null);
     } else if (selectedFile) {

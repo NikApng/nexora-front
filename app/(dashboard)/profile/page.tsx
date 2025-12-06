@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, {useState} from "react";
 import PhotoUploadModal from "@/components/profile/PhotoUploadModal";
-import { useSession } from "next-auth/react";
-import { useProfile } from "@/lib/hooks/use-profile";
+import {useSession} from "next-auth/react";
+import {useProfile} from "@/lib/hooks/use-profile";
 
 import HeaderProfileSide from "@/components/profile/HeaderProfileSide";
 import BioSectionProfile from "@/components/profile/BioSectionProfile";
@@ -13,7 +13,7 @@ function Page() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
 
-    const { data: profile } = useProfile();
+    const {data: profile} = useProfile();
 
     return (
         <main className="min-h-screen bg-background py-8 text-foreground">
@@ -25,20 +25,15 @@ function Page() {
                     currentPhoto={profilePhoto}
                 />
 
-                {/* ——— Верхний блок с аватаром ——— */}
-                <HeaderProfileSide isOpen={() => setIsModalOpen(true)} />
+                <HeaderProfileSide isOpen={() => setIsModalOpen(true)}/>
 
-                {/* ——— Основной макет 2 колонки ——— */}
                 <div className="flex flex-col lg:flex-row gap-8">
 
-                    {/* Левая колонка — профиль */}
                     <div className="flex-1 flex flex-col gap-6">
-                        <BioSectionProfile />
-                        {/* сюда потом добавишь проекты, достижения и т.д. */}
+
                     </div>
 
-                    {/* Правая колонка — статистика / графики */}
-                    <RightStatsSection />
+                    <RightStatsSection/>
 
                 </div>
 
