@@ -6,40 +6,37 @@ type BrandLoaderProps = {
 };
 
 export function BrandLoader({fullScreen = false, label}: BrandLoaderProps) {
-    const wrapperClasses = fullScreen
+    const wrapper = fullScreen
         ? "min-h-screen flex items-center justify-center bg-background"
         : "flex items-center justify-center";
 
     return (
-        <div className={wrapperClasses}>
-            <div className="relative flex flex-col items-center gap-4">
+        <div className={wrapper}>
+            <div className="flex flex-col items-center gap-4">
 
                 <div
-                    className="relative flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-tr from-primary via-sky-500 to-emerald-400 shadow-xl shadow-primary/40">
+                    className="relative flex h-14 w-14 items-center justify-center rounded-xl border border-muted shadow-sm">
+                    <span className="text-xl font-semibold text-foreground">N</span>
 
-                    <div className="absolute inset-2 rounded-3xl border border-white/20 animate-pulse"/>
-
-                    <span className="relative text-3xl font-semibold tracking-[0.25em] text-white"
-                    >N
-                    </span>
-
-                    <div className="pointer-events-none absolute -inset-4 rounded-[2rem] bg-primary/20 blur-xl"/>
+                    <span className="absolute inset-0 flex items-center justify-center">
+            <span className="h-12 w-12 animate-spin rounded-full border-2 border-muted border-t-primary"/>
+          </span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-primary/80 animate-bounce"/>
+                <div className="flex items-center gap-1">
+                    <span className="h-1.5 w-1.5 rounded-full bg-primary animate-bounce"/>
                     <span
-                        className="h-2.5 w-2.5 rounded-full bg-primary/70 animate-bounce"
+                        className="h-1.5 w-1.5 rounded-full bg-primary/80 animate-bounce"
                         style={{animationDelay: "0.15s"}}
                     />
                     <span
-                        className="h-2.5 w-2.5 rounded-full bg-primary/60 animate-bounce"
+                        className="h-1.5 w-1.5 rounded-full bg-primary/60 animate-bounce"
                         style={{animationDelay: "0.3s"}}
                     />
                 </div>
 
                 {label && (
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                         {label}
                     </p>
                 )}
