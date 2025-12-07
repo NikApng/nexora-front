@@ -5,7 +5,7 @@ import {useSession} from "next-auth/react";
 import {Button} from "@/components/ui/button";
 
 
-function HeaderProfileSide({isOpen, }) {
+function HeaderProfileSide({isOpen, projectsCounter}) {
     const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
 
     const handlePhotoSelect = (file: File | null) => {
@@ -68,7 +68,7 @@ function HeaderProfileSide({isOpen, }) {
 
             <div className="grid w-full grid-cols-3 gap-4 md:w-auto">
                 <div className="text-center">
-                    <div className="text-lg font-semibold">0</div>
+                    <div className="text-lg font-semibold">{projectsCounter}</div>
                     <div className="text-xs text-muted-foreground">Проектов</div>
                 </div>
                 <div className="text-center">
