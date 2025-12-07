@@ -2,6 +2,8 @@ import React, {useState} from "react";
 import { Button } from "@/components/ui/button";
 import { ProjectCard } from "./ProjectCard";
 import CreateProjectModal from "@/components/profile/projects/CreateProjectModal";
+import {BrandLoader} from "@/components/ui/Loader";
+import { useProfile } from "@/lib/hooks/use-profile";
 
 type Project = {
     id: number | string;
@@ -39,7 +41,7 @@ export function ProjectsGrid({
                                  onCreateProject,
                              }: ProjectsGridProps) {
     const [isOpen, setOpen] = useState(false)
-
+    const { data: profile, isLoading } = useProfile();
     const handleSubmitFromModal = (values: CreateProjectFormValues) => {
         if (onCreateProject) {
             onCreateProject(values)
@@ -72,26 +74,31 @@ export function ProjectsGrid({
             </header>
 
             <div className="flex flex-col gap-3">
-                {projects.length === 0 ? (
-                    <div className="rounded-2xl border border-dashed border-border bg-card/40 p-6 text-sm text-muted-foreground text-center">
-                        Здесь появятся ваши проекты. Создайте первый, чтобы начать.
-                    </div>
+                {isLoading ? (
+                    <BrandLoader />
                 ) : (
-                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                        {projects.map((project) => (
-                            <ProjectCard
-                                key={project.id}
-                                id={project.id}
-                                name={project.name}
-                                description={project.description}
-                                language={project.language}
-                                stack={project.stack}
-                                updatedAt={project.updatedAt}
-                                onRemove={onRemoveProject}
-                            />
-                        ))}
-                    </div>
+                    projects.length === 0 ? (
+                            <div className="rounded-2xl border border-dashed border-border bg-card/40 p-6 text-sm text-muted-foreground text-center">
+                                Здесь появятся ваши проекты. Создайте первый, чтобы начать.
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                {projects.map((project) => (
+                                    <ProjectCard
+                                        key={project.id}
+                                        id={project.id}
+                                        name={project.name}
+                                        description={project.description}
+                                        language={project.language}
+                                        stack={project.stack}
+                                        updatedAt={project.updatedAt}
+                                        onRemove={onRemoveProject}
+                                    />
+                                ))}
+                            </div>
+                        )
                 )}
+
             </div>
         </section>
     )

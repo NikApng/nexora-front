@@ -58,6 +58,7 @@ export function useCreateProject() {
         },
     });
 }
+
 export function useDeleteProject() {
     const queryClient = useQueryClient();
 
@@ -78,5 +79,18 @@ export function useDeleteProject() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["projects"] });
         },
+    });
+}
+
+async function fetchPopularProjects(): Promise<ProjectDto[]> {
+    const res = await fetch("/api/projects/popular");
+    if (!res.ok) throw new Error("Не удалось загрузить популярные проекты");
+    return res.json();
+}
+
+export function usePopularProjects() {
+    return useQuery({
+        queryKey: ["projects", "popular"],
+        queryFn: fetchPopularProjects,
     });
 }
