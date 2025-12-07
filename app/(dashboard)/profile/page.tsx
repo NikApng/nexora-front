@@ -1,5 +1,5 @@
 "use client";
-
+import type { CreateProjectFormValues } from "@/components/profile/projects/CreateProjectModal";
 import React, { useState } from "react";
 import PhotoUploadModal from "@/components/profile/PhotoUploadModal";
 import { useProjects, useCreateProject, useDeleteProject } from "@/lib/hooks/use-pojects";

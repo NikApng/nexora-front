@@ -5,7 +5,12 @@ import {X} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
-
+export type CreateProjectFormValues = {
+    name: string;
+    description: string;
+    language: string;
+    stackText: string;
+};
 type CreateProjectModalProps = {
     open: boolean;
     onClose: () => void;
