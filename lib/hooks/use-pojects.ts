@@ -7,8 +7,23 @@ export interface ProjectDto {
     description: string | null;
     language: string;
     stack: string;
+    code: string | null;
+    codeFilename: string | null;
+    codeStructure: string | null;
     createdAt: string;
     updatedAt: string;
+}
+
+export interface ProjectOwnerDto {
+    id: number;
+    name: string | null;
+    email: string | null;
+    bio: string | null;
+    createdAt: string | Date | null;
+}
+
+export interface ProjectDetailsDto extends ProjectDto {
+    owner: ProjectOwnerDto | null;
 }
 
 async function fetchProjects(): Promise<ProjectDto[]> {
@@ -17,11 +32,33 @@ async function fetchProjects(): Promise<ProjectDto[]> {
     return res.json();
 }
 
+async function fetchProjectById(id: number | string): Promise<ProjectDetailsDto> {
+    const res = await fetch(`/api/projects/${id}`);
+
+    if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        const message = data?.error || "Не удалось загрузить проект";
+        throw new Error(message);
+    }
+
+    return res.json();
+}
+
 interface CreateProjectPayload {
     name: string;
     description?: string;
     language?: string;
     stack?: string[];
+    code?: string;
+    codeFilename?: string | null;
+    codeStructure?: string | null;
+}
+
+interface UpdateProjectPayload {
+    description?: string;
+    code?: string;
+    codeFilename?: string | null;
+    codeStructure?: string | null;
 }
 
 async function createProject(payload: CreateProjectPayload): Promise<ProjectDto> {
@@ -39,10 +76,50 @@ async function createProject(payload: CreateProjectPayload): Promise<ProjectDto>
     return res.json();
 }
 
+async function updateProject(id: number | string, payload: UpdateProjectPayload): Promise<ProjectDto> {
+    const res = await fetch(`/api/projects/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error || "Не удалось обновить проект");
+    }
+
+    return res.json();
+}
+
 export function useProjects() {
     return useQuery({
         queryKey: ["projects"],
         queryFn: fetchProjects,
+    });
+}
+
+export function useUpdateProject(id?: number | string) {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (payload: UpdateProjectPayload) => updateProject(id as string, payload),
+        onSuccess: (updated) => {
+            queryClient.setQueryData<ProjectDto[] | undefined>(["projects"], (old) =>
+                old ? old.map((p) => (p.id === updated.id ? updated : p)) : old
+            );
+            queryClient.setQueryData(["projects", "popular"], (old: ProjectDto[] | undefined) =>
+                old ? old.map((p) => (p.id === updated.id ? updated : p)) : old
+            );
+            queryClient.setQueryData(["projects", id], updated);
+        },
+    });
+}
+
+export function useProjectById(id?: number | string) {
+    return useQuery({
+        queryKey: ["projects", id],
+        queryFn: () => fetchProjectById(id as string),
+        enabled: Boolean(id),
     });
 }
 

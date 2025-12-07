@@ -11,6 +11,15 @@ export class ProjectRepository {
             .orderBy(projects.createdAt);
     }
 
+    async findById(id: number): Promise<Project | undefined> {
+        const rows = await db
+            .select()
+            .from(projects)
+            .where(eq(projects.id, id))
+            .limit(1);
+        return rows[0];
+    }
+
     async createForUser(
         userId: number,
         data: Omit<NewProject, "id" | "userId" | "createdAt" | "updatedAt">
@@ -28,6 +37,23 @@ export class ProjectRepository {
 
     async deleteById(id: number) {
         await db.delete(projects).where(eq(projects.id, id));
+    }
+
+    async updateForUser(
+        projectId: number,
+        userId: number,
+        data: Partial<Omit<Project, "id" | "userId" | "createdAt">>
+    ) {
+        const [project] = await db
+            .update(projects)
+            .set({
+                ...data,
+                updatedAt: new Date(),
+            })
+            .where(eq(projects.id, projectId))
+            .returning();
+
+        return project;
     }
 }
 

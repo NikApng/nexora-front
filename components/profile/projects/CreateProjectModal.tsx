@@ -10,6 +10,9 @@ export type CreateProjectFormValues = {
     description: string;
     language: string;
     stackText: string;
+    code: string;
+    codeFilename?: string | null;
+    codeStructure?: string | null;
 };
 type CreateProjectModalProps = {
     open: boolean;
@@ -23,6 +26,79 @@ function CreateProjectModal({open, onClose, onSubmit}: CreateProjectModalProps) 
     const [description, setDescription] = React.useState("")
     const [language, setLanguage] = React.useState("")
     const [stackText, setStackText] = React.useState("")
+    const [code, setCode] = React.useState("")
+    const [codeFileName, setCodeFileName] = React.useState<string | null>(null)
+    const [codeError, setCodeError] = React.useState<string | null>(null)
+    const fileInputRef = React.useRef<HTMLInputElement | null>(null)
+    const folderInputRef = React.useRef<HTMLInputElement | null>(null)
+    const [codeStructure, setCodeStructure] = React.useState<string | null>(null)
+
+    const handleCodeFile = (file?: File | null) => {
+        if (!file) return;
+        const maxBytes = 250 * 1024; // ~250KB, чтобы не класть слишком большой файл в БД
+        if (file.size > maxBytes) {
+            setCodeError("Файл слишком большой (макс ~250KB)");
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const text = e.target?.result?.toString() ?? "";
+            setCode(text);
+            setCodeFileName(file.name);
+            setCodeError(null);
+            setCodeStructure(JSON.stringify([{ path: file.name, size: file.size, content: text }]));
+        };
+        reader.onerror = () => {
+            setCodeError("Не удалось прочитать файл");
+        };
+        reader.readAsText(file);
+    };
+
+    const handleCodeFolder = async (fileList: FileList | null) => {
+        if (!fileList || fileList.length === 0) return;
+
+        const files = Array.from(fileList);
+        const totalSize = files.reduce((acc, f) => acc + f.size, 0);
+        const maxBytes = 900 * 1024; // ~900KB, чтобы не взорвать БД
+        if (totalSize > maxBytes) {
+            setCodeError("Папка слишком большая (макс ~900KB)");
+            return;
+        }
+
+        try {
+            const contents = await Promise.all(
+                files.map(
+                    (file) =>
+                        new Promise<{ path: string; text: string; size: number }>((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = (e) =>
+                                resolve({
+                                    path: (file as any).webkitRelativePath || file.name,
+                                    text: e.target?.result?.toString() ?? "",
+                                    size: file.size,
+                                });
+                            reader.onerror = () => reject(new Error("read error"));
+                            reader.readAsText(file);
+                        })
+                )
+            );
+
+            const combined = contents
+                .map((item) => `// File: ${item.path}\n${item.text}`)
+                .join("\n\n");
+
+            const folderName = (files[0] as any).webkitRelativePath
+                ? (files[0] as any).webkitRelativePath.split("/")[0] || "folder"
+                : files[0].name;
+
+            setCode(combined);
+            setCodeFileName(folderName);
+            setCodeError(null);
+            setCodeStructure(JSON.stringify(contents.map(({ path, size, text }) => ({ path, size, content: text }))));
+        } catch (err) {
+            setCodeError("Не удалось прочитать файлы папки");
+        }
+    };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -87,17 +163,66 @@ function CreateProjectModal({open, onClose, onSubmit}: CreateProjectModalProps) 
 
                         </div>
 
-                        <div className="space-y-1.5">
-                            <Label htmlFor="project-stack" className="text-xs">
-                                Стек
-                            </Label>
-                            <Input
+                    <div className="space-y-1.5">
+                        <Label htmlFor="project-stack" className="text-xs">
+                            Стек
+                        </Label>
+                        <Input
                                 id="project-stack"
                                 placeholder="Next.js, React, Drizzle…"
                                 className="text-sm"
                                 value={stackText}
                                 onChange={(e) => setStackText(e.target.value)}
                             />
+                        </div>
+                    </div>
+                    <div className="space-y-1.5">
+                        <Label htmlFor="project-code" className="text-xs">
+                            Код или фрагмент
+                        </Label>
+                        <textarea
+                            id="project-code"
+                            className="w-full min-h-[120px] rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            placeholder="Вставьте основной файл, ссылку или фрагмент кода…"
+                            value={code}
+                            onChange={(e) => {
+                                setCode(e.target.value);
+                                setCodeFileName(null);
+                                setCodeStructure(null);
+                            }}
+                        />
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                            <label className="inline-flex items-center gap-2 cursor-pointer rounded-full border border-border px-3 py-1.5 hover:bg-accent/60">
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept=".ts,.tsx,.js,.jsx,.json,.md,.txt,.yaml,.yml,.css,.scss,.html,.py,.go,.rs,.java,.kt,.php,.rb,.c,.cpp,.cs,.swift,.mjs"
+                                    className="hidden"
+                                    onChange={(e) => handleCodeFile(e.target.files?.[0])}
+                                />
+                                Загрузить файл
+                            </label>
+                            <label className="inline-flex items-center gap-2 cursor-pointer rounded-full border border-border px-3 py-1.5 hover:bg-accent/60">
+                                <input
+                                    ref={folderInputRef}
+                                    type="file"
+                                    className="hidden"
+                                    multiple
+                                    //@ts-expect-error webkitdirectory поддерживается браузером
+                                    webkitdirectory="true"
+                                    directory=""
+                                    onChange={(e) => handleCodeFolder(e.target.files)}
+                                />
+                                Загрузить папку
+                            </label>
+                            {codeFileName && (
+                                <span className="text-foreground">
+                                    Загружено: <strong>{codeFileName}</strong>
+                                </span>
+                            )}
+                            {codeError && (
+                                <span className="text-destructive">{codeError}</span>
+                            )}
                         </div>
                     </div>
                     <div className="flex items-center justify-end gap-2 px-5 pb-4 pt-2 border-t border-border/60">
@@ -120,6 +245,9 @@ function CreateProjectModal({open, onClose, onSubmit}: CreateProjectModalProps) 
                                     description,
                                     language,
                                     stackText,
+                                    code,
+                                    codeFilename: codeFileName,
+                                    codeStructure,
                                 })
                             }}
                         >

@@ -8,11 +8,15 @@ import HeaderProfileSide from "@/components/profile/HeaderProfileSide";
 import BioSectionProfile from "@/components/profile/BioSectionProfile";
 import RightStatsSection from "@/components/profile/RightStatsSection";
 import type { ProjectDto } from "@/lib/hooks/use-pojects";
+import { useProfileReactions } from "@/lib/hooks/use-project-reactions";
 function Page() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
 
     const { data: projects = [] } = useProjects();
+    const { data: profileReactions } = useProfileReactions();
+    const starsTotal = profileReactions?.stars ?? 0;
+    const watchersTotal = profileReactions?.watchers ?? 0;
 
     const uiProjects = projects.map((project: ProjectDto) => ({
         id: project.id,
@@ -47,6 +51,9 @@ function Page() {
             description: values.description,
             language: values.language,
             stack: stackArray,
+            code: values.code,
+            codeFilename: values.codeFilename,
+            codeStructure: values.codeStructure,
         })
     }
 
@@ -62,6 +69,8 @@ function Page() {
 
                 <HeaderProfileSide
                     projectsCounter={projects.length}
+                    starsTotal={starsTotal}
+                    watchersTotal={watchersTotal}
                     isOpen={() => setIsModalOpen(true)}
                 />
 

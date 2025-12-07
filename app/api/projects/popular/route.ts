@@ -19,6 +19,9 @@ export async function GET() {
             description: p.description ?? "",
             language: p.language,
             stack: p.stack,
+            code: p.code,
+            codeFilename: p.codeFilename,
+            codeStructure: p.codeStructure,
             createdAt: p.createdAt,
             updatedAt: p.updatedAt,
         }));

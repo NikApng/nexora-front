@@ -7,8 +7,10 @@ import {Button} from "@/components/ui/button";
 type HeaderProfileSideProps = {
     isOpen: () => void;
     projectsCounter?: number;
+    starsTotal?: number;
+    watchersTotal?: number;
 };
-function HeaderProfileSide({isOpen, projectsCounter}: HeaderProfileSideProps) {
+function HeaderProfileSide({isOpen, projectsCounter, starsTotal = 0, watchersTotal = 0}: HeaderProfileSideProps) {
     const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
 
     const handlePhotoSelect = (file: File | null) => {
@@ -75,15 +77,15 @@ function HeaderProfileSide({isOpen, projectsCounter}: HeaderProfileSideProps) {
                     <div className="text-xs text-muted-foreground">Проектов</div>
                 </div>
                 <div className="text-center">
-                    <div className="text-lg font-semibold">5</div>
+                    <div className="text-lg font-semibold">{starsTotal}</div>
                     <div className="text-xs text-muted-foreground">
-                        Открытых задач
+                        Звёзд у проектов
                     </div>
                 </div>
                 <div className="text-center">
-                    <div className="text-lg font-semibold">12</div>
+                    <div className="text-lg font-semibold">{watchersTotal}</div>
                     <div className="text-xs text-muted-foreground">
-                        Pull Request&apos;ов
+                        Подписчиков
                     </div>
                 </div>
             </div>

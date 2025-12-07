@@ -30,6 +30,9 @@ export async function POST(request: NextRequest) {
     const description = body.description?.trim() ?? "";
     const language = body.language?.trim() || "TypeScript";
     const stack = Array.isArray(body.stack) ? body.stack.join(", ") : "Next.js, React";
+    const code = typeof body.code === "string" ? body.code : "";
+    const codeFilename = typeof body.codeFilename === "string" ? body.codeFilename : null;
+    const codeStructure = typeof body.codeStructure === "string" ? body.codeStructure : null;
 
     if (!name) {
         return NextResponse.json({ error: "Название обязательно" }, { status: 400 });
@@ -40,6 +43,9 @@ export async function POST(request: NextRequest) {
         description,
         language,
         stack,
+        code,
+        codeFilename,
+        codeStructure,
     });
 
     return NextResponse.json(project, { status: 201 });

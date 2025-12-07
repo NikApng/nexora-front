@@ -1,6 +1,9 @@
 import React from "react";
+import Link from "next/link";
 import {Button} from "@/components/ui/button";
-import {Trash} from "lucide-react";
+import {Trash, Eye, Star} from "lucide-react";
+import { formatDateShort } from "@/lib/utils";
+import { useProjectReactions } from "@/lib/hooks/use-project-reactions";
 
 type ProjectCardProps = {
     id: number | string;
@@ -20,9 +23,9 @@ export function ProjectCard({
                                 description,
                                 language,
                                 stack,
-                                updatedAt,
-                                onRemove,
-                            }: ProjectCardProps) {
+                            updatedAt,
+                            onRemove,
+                        }: ProjectCardProps) {
     const safeStack: string[] = Array.isArray(stack)
         ? stack
         : (stack ?? "")
@@ -30,6 +33,17 @@ export function ProjectCard({
             .map((s) => s.trim())
             .filter(Boolean);
 
+    const {
+        data: reactions,
+        isLoading,
+        toggleStar,
+        toggleWatch,
+    } = useProjectReactions(id);
+
+    const stars = reactions?.stars ?? 0;
+    const watchers = reactions?.watchers ?? 0;
+    const isStarred = reactions?.isStarred ?? false;
+    const isWatching = reactions?.isWatching ?? false;
 
 
     return (
@@ -61,7 +75,7 @@ export function ProjectCard({
 
                 <div className="flex items-center gap-2">
                       <span className="text-[11px] text-muted-foreground whitespace-nowrap">
-                        {updatedAt}
+                        {formatDateShort(updatedAt)}
                       </span>
 
                     <Button
@@ -71,6 +85,34 @@ export function ProjectCard({
                         onClick={() => onRemove?.(id)}
                     >
                         <Trash className="size-4"/>
+                    </Button>
+                    <Link href={`/projects/${id}`} className="text-xs text-primary hover:underline">
+                        Открыть
+                    </Link>
+                </div>
+
+                <div className="flex items-center gap-2">
+                    <Button
+                        type="button"
+                        size="sm"
+                        variant={isStarred ? "default" : "outline"}
+                        className="gap-1 px-3"
+                        onClick={toggleStar}
+                        disabled={isLoading}
+                    >
+                        <Star className="h-3.5 w-3.5" />
+                        {stars}
+                    </Button>
+                    <Button
+                        type="button"
+                        size="sm"
+                        variant={isWatching ? "default" : "outline"}
+                        className="gap-1 px-3"
+                        onClick={toggleWatch}
+                        disabled={isLoading}
+                    >
+                        <Eye className="h-3.5 w-3.5" />
+                        {watchers}
                     </Button>
                 </div>
             </div>
