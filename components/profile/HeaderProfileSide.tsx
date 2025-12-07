@@ -4,8 +4,11 @@ import {useProfile} from "@/lib/hooks/use-profile";
 import {useSession} from "next-auth/react";
 import {Button} from "@/components/ui/button";
 
-
-function HeaderProfileSide({isOpen, projectsCounter}) {
+type HeaderProfileSideProps = {
+    isOpen: () => void;
+    projectsCounter?: number;
+};
+function HeaderProfileSide({isOpen, projectsCounter}: HeaderProfileSideProps) {
     const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
 
     const handlePhotoSelect = (file: File | null) => {

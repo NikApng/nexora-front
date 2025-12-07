@@ -9,6 +9,23 @@ import {ProjectCard} from "@/components/profile/projects/ProjectCard";
 function Page() {
 
     const { data: projects = [] } = usePopularProjects();
+    const adaptedProjects = projects.map((p) => ({
+        id: p.id,
+        name: p.name,
+        description: p.description ?? "",
+        language: p.language,
+        stack: Array.isArray(p.stack)
+            ? p.stack
+            : p.stack
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean),
+        updatedAt: p.updatedAt,
+    }));
+
+
+
+
     return (
         <main className="min-h-screen bg-background py-8 text-foreground">
             <div className="mx-auto max-w-6xl px-4 lg:px-0">
@@ -49,20 +66,19 @@ function Page() {
                 </header>
 
                 <section className="flex flex-col gap-3">
-                    {
-                        projects.map((project) => (
-                                <ProjectCard
-                                    key={project.id}
-                                    id={project.id}
-                                    name={project.name}
-                                    description={project.description}
-                                    language={project.language}
-                                    stack={project.stack}
-                                    updatedAt={project.updatedAt}
-                                />
-                            ))
-                    }
+                    {adaptedProjects.map((project) => (
+                        <ProjectCard
+                            key={project.id}
+                            id={project.id}
+                            name={project.name}
+                            description={project.description}
+                            language={project.language}
+                            stack={project.stack}
+                            updatedAt={project.updatedAt}
+                        />
+                    ))}
                 </section>
+
             </div>
         </main>
     );

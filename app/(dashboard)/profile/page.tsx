@@ -7,12 +7,29 @@ import { ProjectsGrid } from "@/components/profile/projects/ProjectsGrid";
 import HeaderProfileSide from "@/components/profile/HeaderProfileSide";
 import BioSectionProfile from "@/components/profile/BioSectionProfile";
 import RightStatsSection from "@/components/profile/RightStatsSection";
-
+import type { ProjectDto } from "@/lib/hooks/use-pojects";
 function Page() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
 
     const { data: projects = [] } = useProjects();
+
+    const uiProjects = projects.map((project: ProjectDto) => ({
+        id: project.id,
+        name: project.name,
+        description: project.description ?? "",
+
+        language: project.language,
+
+        stack: Array.isArray(project.stack)
+            ? project.stack
+            : project.stack
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean),
+
+        updatedAt: project.updatedAt,
+    }));
     const { mutate: createProject } = useCreateProject();
     const { mutate: deleteProject } = useDeleteProject();
 
@@ -53,10 +70,11 @@ function Page() {
                         <BioSectionProfile />
 
                         <ProjectsGrid
-                            projects={projects}
+                            projects={uiProjects}
                             onCreateProject={handleCreateProject}
                             onRemoveProject={handleRemoveProject}
                         />
+
 
                     </div>
 

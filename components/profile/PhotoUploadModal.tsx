@@ -12,12 +12,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Upload, X } from "lucide-react";
 
-interface PhotoUploadModalProps {
+type PhotoUploadModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onPhotoSelect: (file: File | null) => void;
+  onPhotoSelect?: (file: File | null) => void;
   currentPhoto?: string | null;
-}
+};
 
 function PhotoUploadModal({
   open,
@@ -64,10 +64,11 @@ function PhotoUploadModal({
   const handleSave = () => {
 
     if (!preview) {
-      onPhotoSelect(null);
+      onPhotoSelect?.(null);
     } else if (selectedFile) {
-      onPhotoSelect(selectedFile);
+      onPhotoSelect?.(selectedFile);
     }
+
     onOpenChange(false);
   };
 

@@ -1,2 +1,1 @@
-export { db, initDatabase } from "@/lib/db/connection";
-
+export { db } from "@/lib/db/connection";

@@ -7,10 +7,11 @@ type ProjectCardProps = {
     name: string;
     description: string;
     language: string;
-    stack: string[];
+    stack: string[] | string;
     updatedAt: string;
     onRemove?: (id: number | string) => void;
 };
+
 
 
 export function ProjectCard({
@@ -22,11 +23,13 @@ export function ProjectCard({
                                 updatedAt,
                                 onRemove,
                             }: ProjectCardProps) {
-    const safeStack = Array.isArray(stack)
+    const safeStack: string[] = Array.isArray(stack)
         ? stack
-        : typeof stack === "string"
-            ? stack.split(",").map(s => s.trim())
-            : []
+        : (stack ?? "")
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean);
+
 
 
     return (
