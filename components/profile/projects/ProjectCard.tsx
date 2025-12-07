@@ -1,6 +1,7 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { Trash } from "lucide-react";
+import {Button} from "@/components/ui/button";
+import {Trash} from "lucide-react";
+
 type ProjectCardProps = {
     id: number | string;
     name: string;
@@ -21,10 +22,16 @@ export function ProjectCard({
                                 updatedAt,
                                 onRemove,
                             }: ProjectCardProps) {
-    const safeStack = Array.isArray(stack) ? stack : [];
+    const safeStack = Array.isArray(stack)
+        ? stack
+        : typeof stack === "string"
+            ? stack.split(",").map(s => s.trim())
+            : []
+
 
     return (
-        <article className="rounded-2xl border border-border bg-card p-4 transition hover:border-accent hover:bg-accent/40 flex flex-col gap-3">
+        <article
+            className="rounded-2xl border border-border bg-card p-4 transition hover:border-accent hover:bg-accent/40 flex flex-col gap-3">
             <div className="flex items-center justify-between gap-3">
                 <div className="flex flex-col gap-1">
                     <span className="text-sm font-semibold line-clamp-1">{name}</span>
@@ -44,15 +51,15 @@ export function ProjectCard({
                             key={tech}
                             className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground"
                         >
-              {tech}
-            </span>
+                          {tech}
+                        </span>
                     ))}
                 </div>
 
                 <div className="flex items-center gap-2">
-          <span className="text-[11px] text-muted-foreground whitespace-nowrap">
-            {updatedAt}
-          </span>
+                      <span className="text-[11px] text-muted-foreground whitespace-nowrap">
+                        {updatedAt}
+                      </span>
 
                     <Button
                         type="button"
@@ -60,7 +67,7 @@ export function ProjectCard({
                         variant="ghost"
                         onClick={() => onRemove?.(id)}
                     >
-                        <Trash className="size-4" />
+                        <Trash className="size-4"/>
                     </Button>
                 </div>
             </div>

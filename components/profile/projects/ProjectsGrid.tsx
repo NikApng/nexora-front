@@ -12,35 +12,47 @@ type Project = {
     updatedAt: string;
 };
 
+type CreateProjectFormValues = {
+    name: string
+    description: string
+    language: string
+    stackText: string
+}
+
 type ProjectsGridProps = {
     title?: string;
     subtitle?: string;
     actionLabel?: string;
-    onActionClick?: () => void;
     projects: Project[];
     onRemoveProject?: (id: number | string) => void;
+    onCreateProject?: (values: CreateProjectFormValues) => void;
 };
+
 
 
 export function ProjectsGrid({
                                  title = "Проекты",
                                  subtitle = "Список твоих последних проектов.",
                                  actionLabel = "Новый проект",
-                                 onActionClick,
                                  projects,
-                                 onRemoveProject
+                                 onRemoveProject,
+                                 onCreateProject,
                              }: ProjectsGridProps) {
-
     const [isOpen, setOpen] = useState(false)
+
+    const handleSubmitFromModal = (values: CreateProjectFormValues) => {
+        if (onCreateProject) {
+            onCreateProject(values)
+        }
+        setOpen(false)
+    }
 
     return (
         <section className="flex flex-col gap-4">
-
-            {/* модалка */}
             <CreateProjectModal
                 open={isOpen}
-
                 onClose={() => setOpen(false)}
+                onSubmit={handleSubmitFromModal}
             />
 
             <header className="flex items-center justify-between gap-3">
@@ -77,12 +89,10 @@ export function ProjectsGrid({
                                 updatedAt={project.updatedAt}
                                 onRemove={onRemoveProject}
                             />
-
                         ))}
                     </div>
                 )}
             </div>
-
         </section>
     )
 }

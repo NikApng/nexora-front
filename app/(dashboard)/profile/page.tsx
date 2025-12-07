@@ -19,17 +19,20 @@ function Page() {
     const handleRemoveProject = (id: number | string) => {
         deleteProject(id);
     };
-    const handleNewProject = () => {
-        const name = window.prompt("Название проекта");
-        if (!name) return;
+    const handleCreateProject = (values: CreateProjectFormValues) => {
+        const stackArray = values.stackText
+            .split(",")
+            .map(s => s.trim())
+            .filter(Boolean)
 
         createProject({
-            name,
-            description: "Описание позже",
-            language: "TypeScript",
-            stack: ["Next.js", "React"],
-        });
-    };
+            name: values.name,
+            description: values.description,
+            language: values.language,
+            stack: stackArray,
+        })
+    }
+
 
     return (
         <main className="min-h-screen bg-background py-8 text-foreground">
@@ -51,7 +54,7 @@ function Page() {
 
                         <ProjectsGrid
                             projects={projects}
-                            onActionClick={handleNewProject}
+                            onCreateProject={handleCreateProject}
                             onRemoveProject={handleRemoveProject}
                         />
 
